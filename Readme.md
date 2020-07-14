@@ -1,10 +1,8 @@
 # CI/CD demo pipeline on AWS
 
-This demo implementation reflects the [Jira task SIT-80](https://scigility.atlassian.net/browse/SIT-80)
-
 ## Overview
 
-AWS provides certain services to create a fully automated CI/CD pipeline to implement e.g. a blue/green deployment triggered by ```git push```. This demo implementation will use the following AWS services:
+AWS provides certain services to create a fully automated CI/CD pipeline to implement e.g. a blue/green deployment triggered by ```git push```. 
 
 * ECS : **E**lastic **C**ontainer **S**ervice  
 managed docker container environment, compatible with Fargate and EC2. We will use _Fargate_ as container launch type. By that we do not have to take care of underlying cluster resources (in contrast to use EC2 launch type).
@@ -24,7 +22,6 @@ CodeDeploy is a fully managed deployment service that automates software deploym
 * CodePipeline  
 CodePipeline is the orchestrator which glues together the VCS-,build- and deploy steps. Not only AWS internal services are possible, e.g. you can also integrate GitHub as VCS.
 
-![Pipeline overview](images/cicd-overview.png)
 
 ## Demo pipeline
 
