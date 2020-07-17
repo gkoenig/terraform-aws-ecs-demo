@@ -59,7 +59,49 @@ After those resources are up, the remaining steps are:
   * the user you configured needs to have proper permissions to create the resources 
 * terraform installed v0.12+  ==> [instructions](https://learn.hashicorp.com/terraform/getting-started/install.html)
 
+#### create S3 bucket and dynamoDB table
+
 ```bash
+cd terraform/terraform-s3-remote-state
+#run once
+terraform init
+#check your terraform code
+terraform validate
+terraform plan
+#deploy
+terraform apply
+```
+
+#### create core AWS resources
+
+```bash
+cd terraform/core-aws
+#run once
+terraform init
+#check your terraform code
+terraform validate
+terraform plan
+#deploy
+terraform apply
+```
+
+#### create ECS related resources
+
+```bash
+cd terraform/services/ecs
+#run once
+terraform init
+#check your terraform code
+terraform validate
+terraform plan
+#deploy
+terraform apply
+```
+
+#### create CICD related resources
+
+```bash
+cd terraform/services/cicd
 #run once
 terraform init
 #check your terraform code
