@@ -1,11 +1,86 @@
+provider "aws" {
+  region = var.region
+}
+
+terraform {
+  backend "s3" {
+    bucket         = "scigility-terraform-remote-state"
+    key            = "awscicddemo/ecs-services/ecs/terraform.tfstate"
+    region         = "eu-central-1"
+    dynamodb_table = "scigility-terraform-remote-state-locks"
+    encrypt        = true
+  }
+}
+
+data "terraform_remote_state" "coreaws" {
+  backend = "s3"
+  config = {
+    bucket         = "scigility-terraform-remote-state"
+    key            = "awscicddemo/core-aws/terraform.tfstate"
+    region         = "eu-central-1"
+  }
+}
+
+resource "aws_security_group" "alb" {
+  name   = "${var.namespace}${var.delimiter}${var.stage}${var.delimiter}-alb-secgroup"
+  vpc_id = data.terraform_remote_state.coreaws.outputs.vpc_id
+
+  # default: we only let http port 80 through the ALB
+  ingress {
+    protocol         = "tcp"
+    from_port        = var.app_port
+    to_port          = var.app_port
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  egress {
+    protocol         = "-1"
+    from_port        = 0
+    to_port          = 0
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
+
+module "alb" {
+  source = "git@github.com:scigility/tf-aws-core-infra.git//alb"
+
+  namespace          = var.namespace
+  stage              = var.stage
+  load_balancer_type = "application"
+
+  vpc_id          = data.terraform_remote_state.coreaws.outputs.vpc_id
+  subnets         = values(data.terraform_remote_state.coreaws.outputs.public_az_subnet_ids)
+  security_groups = [aws_security_group.alb.id]
+
+  target_groups = [
+    {
+      backend_protocol = "HTTP"
+      backend_port     = var.app_port
+      target_type      = "ip"
+    }
+  ]
+
+  http_tcp_listeners = [
+    {
+      port               = var.app_port
+      protocol           = "HTTP"
+      target_group_index = 0
+    }
+  ]
+
+  tags = var.tags
+}
+
 resource "aws_ecs_cluster" "default" {
-  name = "${var.namespace}${var.delimiter}${var.stage}${var.delimiter}-ecs-democluster"
+  name = "${var.namespace}${var.delimiter}${var.stage}${var.delimiter}ecs-democluster"
   tags = var.tags
 }
 
 resource "aws_security_group" "task-sg" {
-  name   = "${var.namespace}${var.delimiter}${var.stage}${var.delimiter}-task-secgroup"
-  vpc_id = module.vpc.vpc_id
+  name   = "${var.namespace}${var.delimiter}${var.stage}${var.delimiter}task-secgroup"
+  vpc_id = data.terraform_remote_state.coreaws.outputs.vpc_id
 
   ingress {
     protocol         = "tcp"
@@ -46,9 +121,9 @@ module "ecs_alb_service_task" {
   container_definition_json          = module.container_definition.json
   ecs_cluster_arn                    = aws_ecs_cluster.default.arn
   launch_type                        = var.ecs_launch_type
-  vpc_id                             = module.vpc.vpc_id
+  vpc_id                             = data.terraform_remote_state.coreaws.outputs.vpc_id
   security_group_ids                 = [aws_security_group.task-sg.id]
-  subnet_ids                         = values(module.subnets.az_subnet_ids)
+  subnet_ids                         = values(data.terraform_remote_state.coreaws.outputs.public_az_subnet_ids)
   tags                               = var.tags
   ignore_changes_task_definition     = var.ignore_changes_task_definition
   network_mode                       = var.network_mode
