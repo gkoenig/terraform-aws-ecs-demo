@@ -4,3 +4,6 @@
 .terraform.tfstate.lock.info
 # Module directory
 .terraform/
+# temporary directories
+go-simplehttp/
+aws-cicd-demo-code-repo/
