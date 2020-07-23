@@ -58,6 +58,7 @@ After those resources are up, the remaining steps are:
 * aws cli installed and configured (by default terraform takes the AWS_ACCESS_KEY and AWS_SECRET_KEY from ~/.aws/credentials , from the profile _default_ )
   * the user you configured needs to have proper permissions to create the resources 
 * terraform installed v0.12+  ==> [instructions](https://learn.hashicorp.com/terraform/getting-started/install.html)
+* to execute the **terratest** IaC tests you need to have _golang_ installed. It uses the built-in package _testing_  to run ```go test xyz_test.go``` ( details of Terratest [here](https://terratest.gruntwork.io/docs/#getting-started))
 
 #### create S3 bucket and dynamoDB table
 
