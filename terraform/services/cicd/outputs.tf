@@ -14,3 +14,6 @@ output "CodeCommit_repo_id" {
 output "CodeCommit_repo_arn" {
   value = aws_codecommit_repository.code_repo.arn
 }
+output "tags" {
+  value = var.tags
+}
