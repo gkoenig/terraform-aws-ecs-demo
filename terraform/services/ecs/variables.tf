@@ -21,6 +21,16 @@ variable "delimiter" {
   default     = "-"
 }
 # ECS related variables
+variable "ecs-clustername" {
+  type = string
+  default = ""
+}
+
+variable "alb-name" {
+  type = string
+  default = ""
+}
+
 variable "app_port" {
   type        = number
   default     = 80

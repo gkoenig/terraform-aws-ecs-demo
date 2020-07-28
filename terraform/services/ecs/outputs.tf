@@ -17,4 +17,13 @@ output "task_exec_role_arn" {
 output "loadbalancer_dns" {
   value = module.alb.this_lb_dns_name
 }
+output "alb_name" {
+  value = var.alb-name
+}
+output "tags" {
+  value = var.tags
+}
+output "vpc_id" {
+  value = aws_security_group.task-sg.vpc_id
+}
 

@@ -48,6 +48,7 @@ module "alb" {
 
   namespace          = var.namespace
   stage              = var.stage
+  alb-name           = var.alb-name
   load_balancer_type = "application"
 
   vpc_id          = data.terraform_remote_state.coreaws.outputs.vpc_id
@@ -74,7 +75,7 @@ module "alb" {
 }
 
 resource "aws_ecs_cluster" "default" {
-  name = "${var.namespace}${var.delimiter}${var.stage}${var.delimiter}ecs-democluster"
+  name = var.ecs-clustername == "" ? "${var.namespace}${var.delimiter}${var.stage}${var.delimiter}ecs-democluster" : var.ecs-clustername
   tags = var.tags
 }
 

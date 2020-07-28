@@ -75,8 +75,19 @@ terraform apply
 
 #### create core AWS resources
 
+run the tests upfront
+
 ```bash
-cd terraform/core-aws
+cd <repo-root-dir>/terraform/core-aws/terratest
+go test terraform-core-aws_test.go
+# for verbose output add flag -v
+# go test -v terraform-core-aws_test.go
+```
+
+and then create the resources
+
+```bash
+cd <repo-root-dir>/terraform/core-aws
 #run once
 terraform init
 #check your terraform code
@@ -89,7 +100,7 @@ terraform apply
 #### create ECS related resources
 
 ```bash
-cd terraform/services/ecs
+cd <repo-root-dir>/terraform/services/ecs
 #run once
 terraform init
 #check your terraform code
@@ -102,7 +113,7 @@ terraform apply
 #### create CICD related resources
 
 ```bash
-cd terraform/services/cicd
+cd <repo-root-dir>/terraform/services/cicd
 #run once
 terraform init
 #check your terraform code
